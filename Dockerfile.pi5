@@ -1,0 +1,27 @@
+# Use Ubuntu 25.04 ARM64 base image
+FROM arm64v8/ubuntu:25.04
+
+# Set workdir (optional, but common)
+WORKDIR /mainDir
+
+# Set environment variables.
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8 \
+    TZ=America/Mexico_City
+
+# Update packages.
+RUN apt-get update && \
+    apt-get install -y \
+        tzdata \
+        locales && \
+    # Set timezone to Mexico City.
+    ln -fs /usr/share/zoneinfo/America/Mexico_City /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata && \
+    # Generate and set locale to en_US.UTF-8.
+    locale-gen en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8 && \
+    # Clean up.
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+

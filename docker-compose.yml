@@ -1,16 +1,17 @@
-## Dockercompose to start up a rqaspberrrypi5 container.
+## Dockercompose to start up a debian-raspberrrypi5 container.
 
 version: "3.8"
 services:
   raspi5-dev-service:
-    container_name: RasPi5-Container
+    container_name: Debian-RasPi5-Container
     build:
       context: .
       dockerfile: ./Dockerfile.pi5
-    image: ubuntu-arm64
+    image: debian-arm64
     platform: linux/arm64
     volumes:
       - ./init-RasPi5Container.sh:/bin/init-RasPi5Container.sh
+      - ./Projects:/mainDir/Projects
     networks:
       - RasPiNetwork
     entrypoint: ["/bin/init-RasPi5Container.sh"]

@@ -1,4 +1,4 @@
 # Ignore the ENV file.
 .env
 # Ignore the environment for fastapi
-Projects/FastApi/fastApiVenv/
+Projects/

@@ -1,0 +1,42 @@
+# Dckerfile to generate a RasPi5-Python3 image.
+FROM --platform=linux/arm64 debian:bookworm
+
+# Set environment variables for time zone and languaje.
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8 \
+    TZ=America/Mexico_City 
+
+# Update packages and installing relevant tools.
+RUN apt-get update && \
+    apt-get install -y \
+    tzdata \
+    locales \
+    wget \
+    curl \
+    ca-certificates \ 
+    gnupg \ 
+    lsb-release && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Set timezone.
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+    
+# Enable en_US.UTF-8 locale in locale.gen
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen && \
+    update-locale LANG=en_US.UTF-8
+
+# Installing python3.11
+RUN apt-get update && apt-get upgrade && apt-get install -y \
+    python3 \
+    python3-venv && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Port to expose
+EXPOSE 8000
+
+# Defining the working directory.
+WORKDIR /mainDir

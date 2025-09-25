@@ -1,0 +1,43 @@
+# Docker file to create a RasPi5-NodeJS image and container.
+
+# Use debian bookworm ARM64 base image
+FROM --platform=linux/arm64 debian:bookworm
+
+# Set environment variables.
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8 \
+    TZ=America/Mexico_City 
+
+# Update packages.
+RUN apt-get update && \
+    apt-get install -y \
+        tzdata \
+        locales  \
+        wget \
+        curl \
+        ca-certificates \ 
+        gnupg \ 
+        lsb-release && \
+        apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Set timezone
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+    
+# Enable en_US.UTF-8 locale in locale.gen
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen && \
+    update-locale LANG=en_US.UTF-8
+
+# Adding repositories
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash
+
+# Installing stuffs
+RUN apt-get update && apt-get upgrade && \ 
+    apt-get install -y nodejs && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /mainDir
+

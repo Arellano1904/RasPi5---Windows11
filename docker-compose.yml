@@ -1,5 +1,4 @@
 ## Dockercompose to start up a debian-raspberrrypi5 container.
-
 version: "3.8"
 services:
   raspi5-dev-service:
@@ -45,5 +44,21 @@ services:
     ports:
       - "8000:8000"
     entrypoint: [/bin/init-RasPi5-Python3.sh]
+  nodejs:
+    container_name: NodeJS-Container
+    build:
+      context: ./NodeJS
+      dockerfile: Dockerfile.nodejs
+    image: raspi5-nodejs
+    platform: linux/arm64
+    volumes:
+      - ./NodeJS/init-RasPi5-NodeJS.sh:/bin/init-RasPi5-NodeJS.sh
+      - ./Projects:/mainDir
+    networks:
+      - RasPi5-Network
+    ports:
+      - "5173:5173"
+    entrypoint: ["bin/init-RasPi5-NodeJS.sh"]
+
 networks:
   RasPi5-Network:

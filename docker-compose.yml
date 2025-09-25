@@ -14,11 +14,22 @@ services:
       - ./Projects:/mainDir/Projects
     networks:
       - RasPiNetwork
-    ports:
-      - "8000:8000"
-      - "3000:3000"
-      - "1904:1904"
     entrypoint: ["/bin/init-RasPi5Container.sh"]
+  postgresql:
+    container_name: PostgreSQL-Container
+    build:
+      context: ./PostgreSQL
+      dockerfile: Dockerfile.database
+    image: raspi5-database
+    platform: linux/arm64
+    volumes:
+      - ./PostgreSQL/init-RasPi5PostgreSQL.sh:/bin/init-RasPi5PostgreSQL.sh
+      - ./Projects:/mainDir
+    networks:
+      - RasPi5-Network:
+    ports:
+      - "1904:1904"
+    entrypoint: ["/bin/init-RasPi5PostgreSQL.sh"]
 
 networks:
-  RasPiNetwork:
+  RasPi5-Network:

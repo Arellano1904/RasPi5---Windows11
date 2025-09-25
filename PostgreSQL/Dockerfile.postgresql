@@ -1,0 +1,47 @@
+# Dockerfile to handle a RaspBerryPi5-PostgreSQL container.
+# Using Debian 12 bookworm base image.
+
+FROM arm64v8/debian:bookworm
+
+# Set environment variables for time zone and languaje.
+ENV DEBIAN_FRONTEND=noninteractive \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8 \
+    TZ=America/Mexico_City 
+
+# Update packages and installing relevant tools.
+RUN apt-get update && \
+    apt-get install -y \
+    tzdata \
+    locales \
+    wget \
+    curl \
+    ca-certificates \ 
+    gnupg \ 
+    lsb-release && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Set timezone.
+RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+    
+# Enable en_US.UTF-8 locale in locale.gen
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && \
+    locale-gen && \
+    update-locale LANG=en_US.UTF-8
+
+# Adding PostgreSQL repository.
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list && \
+    curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /etc/apt/trusted.gpg.d/pgdg.gpg
+
+# Installing PostgreSQL.
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y postgresql-17 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Port to expose
+EXPOSE 1904
+
+# Defining the working directory.
+WORKDIR /mainDir

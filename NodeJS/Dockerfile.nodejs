@@ -1,7 +1,7 @@
 # Docker file to create a RasPi5-NodeJS image and container.
 
 # Use debian bookworm ARM64 base image
-FROM --platform=linux/arm64 debian:bookworm
+FROM debian:bookworm
 
 # Set environment variables.
 ENV DEBIAN_FRONTEND=noninteractive \

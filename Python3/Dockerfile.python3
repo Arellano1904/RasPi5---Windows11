@@ -1,5 +1,5 @@
 # Dckerfile to generate a RasPi5-Python3 image.
-FROM --platform=linux/arm64 debian:bookworm
+FROM debian:bookworm
 
 # Set environment variables for time zone and languaje.
 ENV DEBIAN_FRONTEND=noninteractive \
